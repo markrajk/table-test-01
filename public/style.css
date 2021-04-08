@@ -17959,7 +17959,7 @@ input {
 .public_fixedDataTableCell_main,
 .public_fixedDataTableRow_highlighted,
 .public_fixedDataTableRow_highlighted .public_fixedDataTableCell_main {
-  background-color: transparent !important; }
+  background-color: #fff !important; }
 
 .fixedDataTableCellLayout_wrap1 {
   width: 100% !important; }
@@ -17978,7 +17978,7 @@ input {
   position: absolute !important;
   top: 0 !important;
   left: 0 !important;
-  background-color: transparent !important;
+  background-color: #fff !important;
   width: 100% !important; }
   .fixedDataTableCellLayout_columnReorderContainer::after {
     display: none !important; }
@@ -18012,6 +18012,23 @@ input {
 
 .public_fixedDataTable_header {
   border-bottom: 2px solid #e4e6e9 !important; }
+
+.public_fixedDataTableRow_fixedColumnsDivider {
+  border-right: 0 !important;
+  border-color: transparent !important; }
+
+.public_fixedDataTable_header .public_fixedDataTableCell_cellContent {
+  padding-left: 8px !important;
+  font-size: 1.1em !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.08px !important;
+  text-align: left !important;
+  color: #0d1826 !important;
+  opacity: 0.8 !important;
+  pointer-events: none !important; }
+
+.public_fixedDataTable_scrollbarSpacer {
+  display: none !important; }
 
 .team-table-body-item {
   height: 3.5em;
@@ -18131,16 +18148,16 @@ input {
     -webkit-align-items: center;
     -moz-align-items: center;
     align-items: center;
-    -webkit-box-pack: start;
-    -ms-flex-pack: start;
-    -webkit-justify-content: flex-start;
-    -moz-justify-content: flex-start;
-    justify-content: flex-start;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    -moz-justify-content: center;
+    justify-content: center;
     border-radius: 3px;
     background-color: #f5f6f8; }
     .team-table-body-item .stars .star {
-      margin-right: 0.1176470588em;
-      font-size: 1.7em;
+      margin-right: 0.1764705882em;
+      font-size: 2em;
       color: #fece2f; }
       .team-table-body-item .stars .star.full {
         color: #ffce00; }

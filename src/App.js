@@ -1,9 +1,9 @@
 import logo from './logo.svg'
 import './App.css'
-import Demo from './components/demo'
+import Dimensions from './components/MyTable'
 
 function App() {
-  return <Demo />
+  return <Dimensions />
 }
 
 export default App

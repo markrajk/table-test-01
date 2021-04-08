@@ -1,62 +1,324 @@
-import React from 'react'
+import 'fixed-data-table-2/dist/fixed-data-table.css'
+import React, { useState } from 'react'
+import ReactDOM from 'react-dom'
 import { Table, Column, Cell } from 'fixed-data-table-2'
+import getData from '../getData'
+import useWindowSize from '../useWindowSize'
+import '../index.css'
+import Dimensions from 'react-dimensions'
 
-class MyTextCell extends React.Component {
-  render() {
-    const { rowIndex, field, data, ...props } = this.props
-    return <Cell {...props}>{data[rowIndex][field]}</Cell>
+const MyTable = (props) => {
+  const data = getData()
+  const windowSize = useWindowSize()
+  const { height, width, containerHeight, containerWidth } = props
+
+  const [columnOrder, setColumnOrder] = useState([
+    'teamMember',
+    'attitude',
+    'productivity',
+    'teamworking',
+    'averageFeedback',
+    'amountOfGivenFeedback',
+  ])
+
+  const [columnWidths, setColumnWidths] = useState({
+    teamMember: windowSize.width / columnOrder.length,
+    attitude: windowSize.width / columnOrder.length,
+    productivity: windowSize.width / columnOrder.length,
+    teamworking: windowSize.width / columnOrder.length,
+    averageFeedback: windowSize.width / columnOrder.length,
+    amountOfGivenFeedback: windowSize.width / columnOrder.length,
+  })
+  // const [columnWidths, setColumnWidths] = useState({
+  //   teamMember: 1167 / columnOrder.length,
+  //   attitude: 1167 / columnOrder.length,
+  //   productivity: 1167 / columnOrder.length,
+  //   teamworking: 1167 / columnOrder.length,
+  //   averageFeedback: 1167 / columnOrder.length,
+  //   amountOfGivenFeedback: 1167 / columnOrder.length,
+  // })
+
+  var fixedColumns = ['teamMember']
+
+  function _onColumnResizeEndCallback(newColumnWidth, columnKey) {
+    console.log(newColumnWidth, columnKey)
+    setColumnWidths({
+      ...columnWidths,
+      [columnKey]: newColumnWidth,
+    })
   }
-}
 
-class MyLinkCell extends React.Component {
-  render() {
-    const { rowIndex, field, data, ...props } = this.props
-    const link = data[rowIndex][field]
-    return (
-      <Cell {...props}>
-        <a href={link}>{link}</a>
-      </Cell>
-    )
-  }
-}
+  function _onColumnReorderEndCallback(event) {
+    console.log(event)
+    var columnOrderNew = columnOrder.filter((columnKey) => {
+      return columnKey !== event.reorderColumn
+    })
 
-class MyTable extends React.Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      myTableData: [
-        { name: 'Rylan', email: 'Angelita_Weimann42@gmail.com' },
-        { name: 'Amelia', email: 'Dexter.Trantow57@hotmail.com' },
-        { name: 'Estevan', email: 'Aimee7@hotmail.com' },
-        { name: 'Florence', email: 'Jarrod.Bernier13@yahoo.com' },
-        { name: 'Tressa', email: 'Yadira1@hotmail.com' },
-      ],
+    if (event.columnAfter) {
+      var index = columnOrderNew.indexOf(event.columnAfter)
+      columnOrderNew.splice(index, 0, event.reorderColumn)
+    } else {
+      if (fixedColumns.indexOf(event.reorderColumn) !== -1) {
+        columnOrderNew.splice(fixedColumns.length - 1, 0, event.reorderColumn)
+      } else {
+        columnOrderNew.push(event.reorderColumn)
+      }
     }
+    console.log(columnOrder, columnOrderNew)
+    setColumnOrder([...columnOrderNew])
   }
 
-  render() {
-    return (
+  return (
+    <div className="App">
       <Table
-        rowsCount={this.state.myTableData.length}
-        rowHeight={50}
-        headerHeight={50}
-        width={1000}
-        height={500}
+        rowHeight={39}
+        rowsCount={data.length}
+        headerHeight={35}
+        // width={1167}
+        onColumnResizeEndCallback={_onColumnResizeEndCallback}
+        isColumnResizing={false}
+        onColumnReorderEndCallback={_onColumnReorderEndCallback}
+        isColumnReordering={false}
+        touchScrollEnabled={true}
+        // width={windowSize.width}
+        // height={windowSize.height}
+        // height={430}
+        width={containerWidth}
+        height={containerHeight}
+        className="team-table"
       >
-        <Column
-          header={<Cell>Name</Cell>}
-          cell={<MyTextCell data={this.state.myTableData} field="name" />}
-          width={200}
-        />
-        <Column
-          header={<Cell>Email</Cell>}
-          cell={<MyLinkCell data={this.state.myTableData} field="email" />}
-          width={200}
-        />
+        {columnOrder.map(function (columnKey, i) {
+          if (columnKey === 'teamMember') {
+            return (
+              <Column
+                minWidth={200}
+                maxWidth={500}
+                allowCellsRecycling={true}
+                columnKey={columnKey}
+                key={i}
+                isReorderable={true}
+                header={<Cell>{columnKey}</Cell>}
+                cell={({ rowIndex, columnKey }) => {
+                  return (
+                    <Cell>
+                      <div className="team-table-body-item">
+                        <div className="team-table-body-item-img-wrapper">
+                          <img
+                            src="/img/p-01.png"
+                            alt="User"
+                            className="team-table-body-item-img"
+                          />
+                        </div>
+                        <p className="team-table-body-item-text">
+                          <span>Gregory Porter</span>&nbsp;- Senior Python
+                          Developer
+                        </p>
+                      </div>
+                    </Cell>
+                  )
+                }}
+                fixed={fixedColumns.indexOf(columnKey) !== -1}
+                isResizable={true}
+                width={columnWidths[columnKey]}
+                // flexGrow={1}
+              />
+            )
+          } else if (columnKey === 'attitude') {
+            return (
+              <Column
+                minWidth={200}
+                maxWidth={500}
+                allowCellsRecycling={true}
+                columnKey={columnKey}
+                key={i}
+                isReorderable={true}
+                header={<Cell>{columnKey}</Cell>}
+                cell={({ rowIndex, columnKey }) => {
+                  return (
+                    <Cell>
+                      <div className="team-table-body-item">
+                        <div className="team-table-body-item-button green">
+                          Good
+                        </div>
+                      </div>
+                    </Cell>
+                  )
+                }}
+                fixed={fixedColumns.indexOf(columnKey) !== -1}
+                isResizable={true}
+                width={columnWidths[columnKey]}
+                // flexGrow={1}
+              />
+            )
+          } else if (columnKey === 'productivity') {
+            return (
+              <Column
+                minWidth={200}
+                maxWidth={500}
+                allowCellsRecycling={true}
+                columnKey={columnKey}
+                key={i}
+                isReorderable={true}
+                header={<Cell>{columnKey}</Cell>}
+                cell={({ rowIndex, columnKey }) => {
+                  return (
+                    <Cell>
+                      <div className="team-table-body-item">
+                        <div className="team-table-body-item-button green">
+                          Good
+                        </div>
+                      </div>
+                    </Cell>
+                  )
+                }}
+                fixed={fixedColumns.indexOf(columnKey) !== -1}
+                isResizable={true}
+                width={columnWidths[columnKey]}
+                // flexGrow={1}
+              />
+            )
+          } else if (columnKey === 'teamworking') {
+            return (
+              <Column
+                minWidth={200}
+                maxWidth={500}
+                allowCellsRecycling={true}
+                columnKey={columnKey}
+                key={i}
+                isReorderable={true}
+                header={<Cell>{columnKey}</Cell>}
+                cell={({ rowIndex, columnKey }) => {
+                  return (
+                    <Cell>
+                      <div className="team-table-body-item">
+                        <div className="team-table-body-item-button green">
+                          Good
+                        </div>
+                      </div>
+                    </Cell>
+                  )
+                }}
+                fixed={fixedColumns.indexOf(columnKey) !== -1}
+                isResizable={true}
+                width={columnWidths[columnKey]}
+                // flexGrow={1}
+              />
+            )
+          } else if (columnKey === 'averageFeedback') {
+            return (
+              <Column
+                minWidth={200}
+                maxWidth={500}
+                allowCellsRecycling={true}
+                columnKey={columnKey}
+                key={i}
+                isReorderable={true}
+                header={<Cell>{columnKey}</Cell>}
+                cell={({ rowIndex, columnKey }) => {
+                  return (
+                    <Cell>
+                      <div className="team-table-body-item">
+                        <div className="stars">
+                          <div className="star full">
+                            <i className="icon-star"></i>
+                          </div>
+                          <div className="star full">
+                            <i className="icon-star"></i>
+                          </div>
+                          <div className="star full">
+                            <i className="icon-star"></i>
+                          </div>
+                          <div className="star full">
+                            <i className="icon-star"></i>
+                          </div>
+                          <div className="star">
+                            <i className="icon-star"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </Cell>
+                  )
+                }}
+                fixed={fixedColumns.indexOf(columnKey) !== -1}
+                isResizable={true}
+                width={columnWidths[columnKey]}
+                // flexGrow={1}
+              />
+            )
+          } else if (columnKey === 'amountOfGivenFeedback') {
+            return (
+              <Column
+                minWidth={200}
+                maxWidth={500}
+                allowCellsRecycling={true}
+                columnKey={columnKey}
+                key={i}
+                isReorderable={true}
+                header={<Cell>{columnKey}</Cell>}
+                cell={({ rowIndex, columnKey }) => {
+                  return (
+                    <Cell>
+                      <div className="team-table-body-item">
+                        <div className="team-table-body-item-progress-wrapper">
+                          <div className="team-table-body-item-progress">
+                            <div className="team-table-body-item-progress-bar green">
+                              <p className="team-table-body-item-progress-bar-label">
+                                12
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Cell>
+                  )
+                }}
+                fixed={fixedColumns.indexOf(columnKey) !== -1}
+                isResizable={true}
+                width={columnWidths[columnKey]}
+                // flexGrow={1}
+              />
+            )
+          } else {
+            return (
+              <Column
+                minWidth={200}
+                maxWidth={500}
+                allowCellsRecycling={true}
+                columnKey={columnKey}
+                key={i}
+                isReorderable={true}
+                header={<Cell>{columnKey}</Cell>}
+                cell={({ rowIndex, columnKey }) => {
+                  return (
+                    <Cell>
+                      <img
+                        src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.wtq8Ba65R83DACEJxDR9GgHaHa%26pid%3DApi&f=1"
+                        alt=""
+                        style={{ width: '35px', height: '35px' }}
+                      />
+                      {data[rowIndex][columnKey]}
+                    </Cell>
+                  )
+                }}
+                fixed={fixedColumns.indexOf(columnKey) !== -1}
+                isResizable={true}
+                width={columnWidths[columnKey]}
+                // flexGrow={1}
+              />
+            )
+          }
+        })}
       </Table>
-    )
-  }
+    </div>
+  )
 }
 
-export default MyTable
+export default Dimensions({
+  getHeight: function (element) {
+    return window.innerHeight - 200
+  },
+  getWidth: function (element) {
+    var widthOffset = window.innerWidth < 680 ? 0 : 240
+    return window.innerWidth - widthOffset
+  },
+})(MyTable)
